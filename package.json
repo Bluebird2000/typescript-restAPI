@@ -15,6 +15,12 @@
     "type": "git",
     "url": "git+https://github.com/Bluebird2000/typescript-restAPI.git"
   },
+  "keywords": [
+    "node",
+    "restful",
+    "api",
+    "heroku"
+  ],
   "author": "Bluebird2000",
   "license": "MIT",
   "bugs": {
@@ -25,9 +31,11 @@
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
-    "mongoose": "^5.4.6",
+    "mongoose": "^4.13.5",
     "nodemon": "^1.18.9",
     "ts-node": "^8.0.1",
+    "bcrypt": "^1.0.3",
+    "jsonwebtoken": "^8.1.0",
     "typescript": "^3.2.4"
   },
   "devDependencies": {
