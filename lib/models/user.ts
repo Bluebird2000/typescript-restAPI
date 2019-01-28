@@ -1,25 +1,34 @@
-import * as mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-export const UserSchema = new Schema({
-    firstname: {
-        type: String,
-        required: 'Enter a first name'
-    },
-    lastname: {
-        type: String,
-        required: 'Enter a last name'
-    },
-    email: {
-        type: String
-    },
-    created_date: {
+let UserSchema: Schema = new Schema({
+    created_at: {
         type: Date,
         default: Date.now
     },
     updated_at: {
         type: Date,
-        default: null
+        default: null,
+    },
+    firstname: {
+        type: String,
+        required: true,
+    },
+    lastname: {
+        type: String,
+        required: true,
+        default: '',
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+    },
+    password: {
+        type: String,
+        required: true,
     }
+
 });
+
+export default model('User', UserSchema);

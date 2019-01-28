@@ -1,33 +1,42 @@
+
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
 import * as mongoose from 'mongoose';
-import indexRoutes from './routes/indexRoute';
-import userRoutes from './routes/userRoute';
-import * as dotenv from 'dotenv';
-dotenv.config();
-class App {
+import * as bodyParser from 'body-parser';
+import * as compression from 'compression';
+import * as logger from 'morgan';
+import * as helmet from 'helmet';
+import * as cors from 'cors';
+import UserRouter from './routes/userRoute';
+
+//creating the server class
+class Server {
     public app: express.Application;
-    public mongoUrl: string = 'mongodb://localhost:27017/tscapi';
+
     constructor() {
         this.app = express();
         this.config();
-        this.mongoSetup();
-        this.apiRoutes();
-    }
-    private config(): void {
-        //Support application/json type post data
-        this.app.use(bodyParser.json());
-        //support application/x-www-form-urlencoded post data
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.routes();
     }
 
-    private mongoSetup(): void {
-        (<any>mongoose.Promise) = global.Promise;
-        mongoose.connect(this.mongoUrl);
+    public config() {
+        // establish connection to mongodb server
+        const MONGO_URI = 'mongodb://localhost:27017/tssandbox';
+        mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
+        // Set up middleware configuration
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use(bodyParser.json());
+        this.app.use(logger('dev'));
+        this.app.use(compression());
+        this.app.use(helmet());
+        this.app.use(cors());
     }
-    private apiRoutes(): void {
-        this.app.use('/api/v1', indexRoutes);
-        this.app.use('/api/v1/', userRoutes);
+    public routes(): void {
+        let router: express.Router;
+        router = express.Router();
+        this.app.use('/', router);
+        this.app.use('/api/v1/users', UserRouter);
     }
 }
-export default new App().app;
+
+// export server connection
+export default new Server().app;
