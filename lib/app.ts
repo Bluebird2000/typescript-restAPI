@@ -6,6 +6,8 @@ import * as compression from 'compression';
 import * as logger from 'morgan';
 import * as helmet from 'helmet';
 import * as cors from 'cors';
+import * as swaggerUi from 'swagger-ui-express';
+import * as swaggerDocument from '../swagger.json';
 import UserRouter from './routes/userRoute';
 
 //creating the server class
@@ -21,7 +23,13 @@ class Server {
     public config() {
         // establish connection to mongodb server
         const MONGO_URI = 'mongodb://localhost:27017/tssandbox';
-        mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
+        // mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
+        mongoose.connect(MONGO_URI || process.env.DATABSE_URL, { useMongoClient: true }, (err) => {
+            if (err) {
+                return console.log('unable to establish database connection', err);
+            }
+            console.log('connection successful');
+        });
         // Set up middleware configuration
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
@@ -35,6 +43,7 @@ class Server {
         router = express.Router();
         this.app.use('/', router);
         this.app.use('/api/v1/users', UserRouter);
+        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     }
 }
 
