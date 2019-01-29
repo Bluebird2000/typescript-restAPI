@@ -17,19 +17,20 @@ class Server {
     constructor() {
         this.app = express();
         this.config();
+        this.middleware();
         this.routes();
     }
 
-    public config() {
-        // establish connection to mongodb server
+    private config() {
         const MONGO_URI = 'mongodb://localhost:27017/tssandbox';
-        // mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
         mongoose.connect(MONGO_URI || process.env.DATABSE_URL, { useMongoClient: true }, (err) => {
             if (err) {
                 return console.log('unable to establish database connection', err);
             }
             console.log('connection successful');
         });
+    }
+    private middleware() {
         // Set up middleware configuration
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
